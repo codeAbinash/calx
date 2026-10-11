@@ -3,10 +3,16 @@ use crate::lexer::tokenize;
 use crate::utils::print_source;
 use std::io;
 
-const DEFAULT_FILE: &str = "examples/hello.cx";
-
 pub fn run(path: Option<&str>) -> io::Result<bool> {
-    let path = path.unwrap_or(DEFAULT_FILE);
+    let path = match path {
+        Some(p) => p,
+        None if cfg!(debug_assertions) => "examples/hello.cx",
+        None => {
+            eprintln!("Usage: cx <FILE>");
+            return Ok(false);
+        }
+    };
+
     let source = std::fs::read_to_string(path)?;
     let lexed = tokenize(&source);
 
