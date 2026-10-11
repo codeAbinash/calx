@@ -1,0 +1,7 @@
+// Variables and data types
+let integer = 42;
+let float = 3.14159;
+let text = "Hello world";
+let single_quote = 'Calx';
+let is_active = true;
+let is_empty = false;

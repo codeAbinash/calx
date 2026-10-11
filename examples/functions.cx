@@ -1,0 +1,13 @@
+// Functions: arrow syntax and block syntax
+
+// Single expression (arrow)
+fn add(a, b) => a + b;
+fn square(x) => x * x;
+
+// Multi-line block function
+fn greet(name) {
+    let msg = "Hello, " + name;
+    print(msg);
+}
+
+let result = square(add(3, 4));

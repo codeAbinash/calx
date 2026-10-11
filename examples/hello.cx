@@ -1,0 +1,5 @@
+// Hello World
+fn main() {
+    let message = "Hello, Calx!";
+    print(message);
+}

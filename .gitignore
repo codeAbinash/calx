@@ -1,0 +1,5 @@
+/target
+.vscode/
+.zed/
+.DS_Store
+Thumbs.db
