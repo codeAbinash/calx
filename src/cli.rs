@@ -1,7 +1,7 @@
 use crate::start::run;
 
-const NAME: &str = "Calx";
-const VERSION: &str = "0.1.0";
+const NAME: &str = env!("CARGO_PKG_NAME");
+const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 fn print_help() {
     println!("Usage: {NAME} [OPTIONS] [FILE]");
