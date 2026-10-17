@@ -5,9 +5,9 @@ use crate::lexer::token::{Token, TokenKind};
 use TokenKind as T;
 
 pub(crate) fn emit(cursor: &mut Cursor, tokens: &mut Vec<Token>, kind: T) {
-    let start = cursor.pos;
+    let start = cursor.pos();
     cursor.advance();
-    tokens.push(Token::new(kind, start, cursor.pos));
+    tokens.push(Token::new(kind, start, cursor.pos()));
 }
 
 fn emit_or(cursor: &mut Cursor, tokens: &mut Vec<Token>, next: char, two: T, one: T) {
@@ -19,10 +19,10 @@ fn emit_or(cursor: &mut Cursor, tokens: &mut Vec<Token>, next: char, two: T, one
 }
 
 fn emit_two(cursor: &mut Cursor, tokens: &mut Vec<Token>, kind: T) {
-    let start = cursor.pos;
+    let start = cursor.pos();
     cursor.advance();
     cursor.advance();
-    tokens.push(Token::new(kind, start, cursor.pos));
+    tokens.push(Token::new(kind, start, cursor.pos()));
 }
 
 fn unexpected_char(start: usize, end: usize, ch: char) -> Error {
@@ -40,7 +40,7 @@ pub(crate) fn operators_and_punctuation(
     errors: &mut Vec<Error>,
 ) {
     let ch = cursor.peek().unwrap_or('\0');
-    let start = cursor.pos;
+    let start = cursor.pos();
     match ch {
         '(' => emit(cursor, tokens, T::LParen),
         ')' => emit(cursor, tokens, T::RParen),
@@ -70,7 +70,7 @@ pub(crate) fn operators_and_punctuation(
 
         _ => {
             cursor.advance();
-            errors.push(unexpected_char(start, cursor.pos, ch));
+            errors.push(unexpected_char(start, cursor.pos(), ch));
         }
     }
 }

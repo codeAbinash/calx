@@ -16,15 +16,15 @@ pub(crate) fn slash_or_comment(
 }
 
 fn single_line_comment(cursor: &mut Cursor, tokens: &mut Vec<Token>) {
-    let start = cursor.pos;
+    let start = cursor.pos();
     cursor.advance();
     cursor.advance();
     cursor.eat_while(|ch| ch != '\n');
-    tokens.push(Token::new(TokenKind::Comment, start, cursor.pos));
+    tokens.push(Token::new(TokenKind::Comment, start, cursor.pos()));
 }
 
 fn multi_line_comment(cursor: &mut Cursor, tokens: &mut Vec<Token>, errors: &mut Vec<Error>) {
-    let start = cursor.pos;
+    let start = cursor.pos();
     cursor.advance();
     cursor.advance();
 
@@ -40,11 +40,11 @@ fn multi_line_comment(cursor: &mut Cursor, tokens: &mut Vec<Token>, errors: &mut
     }
 
     if closed {
-        tokens.push(Token::new(TokenKind::Comment, start, cursor.pos));
+        tokens.push(Token::new(TokenKind::Comment, start, cursor.pos()));
     } else {
         errors.push(Error::lexer(
             start,
-            cursor.pos,
+            cursor.pos(),
             "unterminated block comment",
         ));
     }

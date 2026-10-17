@@ -34,7 +34,8 @@ pub fn tokenize(source: &str) -> LexOutput {
         }
     }
 
-    tokens.push(Token::new(TokenKind::Eof, cursor.pos, cursor.pos));
+    let pos = cursor.pos();
+    tokens.push(Token::new(TokenKind::Eof, pos, pos));
 
     LexOutput { tokens, errors }
 }

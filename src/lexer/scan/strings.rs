@@ -7,7 +7,7 @@ pub(crate) fn string_literal(
     tokens: &mut Vec<Token>,
     errors: &mut Vec<Error>,
 ) {
-    let start = cursor.pos;
+    let start = cursor.pos();
     let str_start_char = cursor.peek().unwrap_or('"'); // " or ' character
 
     cursor.advance();
@@ -34,11 +34,11 @@ pub(crate) fn string_literal(
     } else {
         errors.push(Error::lexer(
             start,
-            cursor.pos,
+            cursor.pos(),
             "unterminated string literal",
         ));
         return;
     }
 
-    tokens.push(Token::new(TokenKind::Str, start, cursor.pos));
+    tokens.push(Token::new(TokenKind::Str, start, cursor.pos()));
 }

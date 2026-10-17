@@ -9,7 +9,7 @@ pub(crate) fn number_literal(
     tokens: &mut Vec<Token>,
     errors: &mut Vec<Error>,
 ) {
-    let start = cursor.pos;
+    let start = cursor.pos();
     cursor.eat_while(|c| c.is_ascii_digit());
 
     if cursor.peek() == Some('.') && cursor.peek_next().is_some_and(|c| c.is_ascii_digit()) {
@@ -22,9 +22,9 @@ pub(crate) fn number_literal(
         .is_some_and(|c| c.is_ascii_alphabetic() || c == '_')
     {
         cursor.eat_while(|c| c.is_ascii_alphanumeric() || c == '_');
-        errors.push(Error::lexer(start, cursor.pos, "invalid number literal"));
+        errors.push(Error::lexer(start, cursor.pos(), "invalid number literal"));
         return;
     }
 
-    tokens.push(Token::new(TokenKind::Number, start, cursor.pos));
+    tokens.push(Token::new(TokenKind::Number, start, cursor.pos()));
 }

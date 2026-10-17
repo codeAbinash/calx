@@ -2,12 +2,16 @@
 /// `pos` is a UTF-8 byte offset into `source`.
 pub struct Cursor<'a> {
     pub(crate) source: &'a str,
-    pub(crate) pos: usize,
+    pos: usize,
 }
 
 impl<'a> Cursor<'a> {
     pub fn new(source: &'a str) -> Self {
         Self { source, pos: 0 }
+    }
+
+    pub(crate) fn pos(&self) -> usize {
+        self.pos
     }
 
     pub(crate) fn peek(&self) -> Option<char> {
