@@ -1,0 +1,89 @@
+name: Nightly release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nightly-release
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build ${{ matrix.asset_name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            binary: target/release/cx
+            asset_name: cx-linux-x86_64
+          - os: windows-latest
+            binary: target/release/cx.exe
+            asset_name: cx-windows-x86_64.exe
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install stable Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build release binary
+        run: cargo build --release --locked
+
+      - name: Stage release asset
+        shell: bash
+        run: |
+          mkdir dist
+          cp "${{ matrix.binary }}" "dist/${{ matrix.asset_name }}"
+
+      - name: Upload release asset
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.asset_name }}
+          path: dist/${{ matrix.asset_name }}
+          if-no-files-found: error
+
+  publish:
+    name: Publish nightly release
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download release assets
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          pattern: cx-*
+          merge-multiple: true
+
+      - name: Move nightly tag to this commit
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git tag --force nightly "$GITHUB_SHA"
+          git push origin refs/tags/nightly --force
+
+      - name: Create or update nightly prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          notes="Automated build from commit $GITHUB_SHA."
+          if gh release view nightly > /dev/null 2>&1; then
+            gh release edit nightly --title Nightly --prerelease --notes "$notes"
+            gh release upload nightly dist/* --clobber
+          else
+            gh release create nightly dist/* --title Nightly --prerelease --notes "$notes"
+          fi
