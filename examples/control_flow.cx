@@ -1,5 +1,5 @@
 // If / Else conditions
-let score = 85;
+let score: int = 85;
 
 if (score >= 90) {
     print("Grade: A");
@@ -10,12 +10,20 @@ if (score >= 90) {
 }
 
 // While loop
-let count = 0;
+let count: int = 0;
 while (count < 5) {
     count = count + 1;
 }
 
-// For loop
+// For loop with `in`
 for (item in [1, 2, 3, 4]) {
     print(item);
+}
+
+// Early return
+fn first_positive(a, b) {
+    if (a > 0) {
+        return a;
+    }
+    return b;
 }

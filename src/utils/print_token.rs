@@ -19,11 +19,12 @@ fn color_of(kind: &T) -> (u8, u8, u8) {
         T::Comment => theme::COMMENT,
         T::Number => theme::NUMBER,
         T::Ident => theme::IDENT,
-        T::Let | T::Fn | T::If | T::Else | T::For | T::While => theme::KEYWORD,
+        T::Let | T::Fn | T::If | T::Else | T::For | T::While | T::In | T::Return => theme::KEYWORD,
         T::Add
         | T::Sub
         | T::Mul
         | T::Div
+        | T::Mod
         | T::Eq
         | T::Gt
         | T::GtEq
@@ -42,6 +43,8 @@ fn color_of(kind: &T) -> (u8, u8, u8) {
         | T::RParen
         | T::Comma
         | T::Semicolon
+        | T::Dot
+        | T::Colon
         | T::LCurly
         | T::RCurly
         | T::LSquare

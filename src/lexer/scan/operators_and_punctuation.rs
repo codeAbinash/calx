@@ -53,8 +53,11 @@ pub(crate) fn operators_and_punctuation(
         '+' => emit(cursor, tokens, T::Add),
         '-' => emit(cursor, tokens, T::Sub),
         // '/' => emit(cursor, tokens, T::Div), // handled inside `src/lexer/scan/comments.rs`
+        '%' => emit(cursor, tokens, T::Mod),
         '^' => emit(cursor, tokens, T::BitXor),
         ';' => emit(cursor, tokens, T::Semicolon),
+        '.' => emit(cursor, tokens, T::Dot),
+        ':' => emit(cursor, tokens, T::Colon),
 
         '!' => emit_or(cursor, tokens, '=', T::NotEq, T::Not),
         '<' => emit_or(cursor, tokens, '=', T::LtEq, T::Lt),

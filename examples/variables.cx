@@ -1,7 +1,18 @@
 // Variables and data types
-let integer = 42;
-let float = 3.14159;
-let text = "Hello world";
-let single_quote = 'Calx';
-let is_active = true;
-let is_empty = false;
+let integer: int = 42;
+let float: float = 3.14159;
+let text: str = "Hello world";
+let single_quote: str = 'Calx';
+let is_active: bool = true;
+let is_empty: bool = false;
+
+// Modulo
+let remainder = 10 % 3;
+
+// Dot access
+let length = text.length;
+
+// Return from a function
+fn double(x) {
+    return x * 2;
+}

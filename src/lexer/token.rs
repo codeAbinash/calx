@@ -8,6 +8,8 @@ pub enum TokenKind {
     Else,
     For,
     While,
+    In,
+    Return,
     Number,
     Str,
     True,
@@ -33,6 +35,7 @@ pub enum TokenKind {
     Sub,
     Mul,
     Div,
+    Mod,
     // Punctuation
     Arrow,
     LParen,
@@ -43,6 +46,8 @@ pub enum TokenKind {
     RSquare,
     Comma,
     Semicolon,
+    Dot,
+    Colon,
     Eof,
 }
 

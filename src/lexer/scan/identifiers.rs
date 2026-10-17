@@ -12,6 +12,8 @@ pub(crate) fn ident_or_keyword(cursor: &mut Cursor, tokens: &mut Vec<Token>) {
         "else" => TokenKind::Else,
         "for" => TokenKind::For,
         "while" => TokenKind::While,
+        "in" => TokenKind::In,
+        "return" => TokenKind::Return,
         "true" => TokenKind::True,
         "false" => TokenKind::False,
         _ => TokenKind::Ident,
@@ -19,4 +21,3 @@ pub(crate) fn ident_or_keyword(cursor: &mut Cursor, tokens: &mut Vec<Token>) {
 
     tokens.push(Token::new(kind, start, cursor.pos()));
 }
-  
