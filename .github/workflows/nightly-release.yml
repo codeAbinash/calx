@@ -29,16 +29,16 @@ jobs:
             asset_name: cx-windows-x86_64.exe
           - os: ubuntu-24.04-arm
             binary: target/release/cx
-            asset_name: cx-linux-aarch64
+            asset_name: cx-linux-arm64
           - os: windows-11-arm
             binary: target/release/cx.exe
-            asset_name: cx-windows-aarch64.exe
+            asset_name: cx-windows-arm64.exe
           - os: macos-15-intel
             binary: target/release/cx
             asset_name: cx-macos-x86_64
           - os: macos-14
             binary: target/release/cx
-            asset_name: cx-macos-aarch64
+            asset_name: cx-macos-arm64
 
     steps:
       - name: Check out repository
@@ -88,14 +88,14 @@ jobs:
           git tag --force nightly "$GITHUB_SHA"
           git push origin refs/tags/nightly --force
 
-      - name: Create or update nightly prerelease
+      - name: Replace nightly prerelease
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           notes="Automated build from commit $GITHUB_SHA."
+
           if gh release view nightly > /dev/null 2>&1; then
-            gh release edit nightly --title Nightly --prerelease --notes "$notes"
-            gh release upload nightly dist/* --clobber
-          else
-            gh release create nightly dist/* --title Nightly --prerelease --notes "$notes"
+            gh release delete nightly --yes
           fi
+
+          gh release create nightly dist/* --title Nightly --prerelease --notes "$notes"
