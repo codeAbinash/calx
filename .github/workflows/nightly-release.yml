@@ -27,6 +27,18 @@ jobs:
           - os: windows-latest
             binary: target/release/cx.exe
             asset_name: cx-windows-x86_64.exe
+          - os: ubuntu-24.04-arm
+            binary: target/release/cx
+            asset_name: cx-linux-aarch64
+          - os: windows-11-arm
+            binary: target/release/cx.exe
+            asset_name: cx-windows-aarch64.exe
+          - os: macos-15-intel
+            binary: target/release/cx
+            asset_name: cx-macos-x86_64
+          - os: macos-14
+            binary: target/release/cx
+            asset_name: cx-macos-aarch64
 
     steps:
       - name: Check out repository
