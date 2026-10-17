@@ -37,6 +37,7 @@ pub(crate) fn string_literal(
             cursor.pos,
             "unterminated string literal",
         ));
+        return;
     }
 
     tokens.push(Token::new(TokenKind::Str, start, cursor.pos));
