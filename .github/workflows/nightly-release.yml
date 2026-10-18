@@ -1,10 +1,15 @@
 name: Nightly release
 
 on:
-  push:
-    branches:
-      - main
+  # 18:30 UTC is midnight IST.
+  schedule:
+    - cron: "30 18 * * *"
   workflow_dispatch:
+    inputs:
+      force:
+        description: Release even when there are no new commits
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -14,88 +19,82 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  prepare:
+    name: Check for new commits
+    runs-on: ubuntu-latest
+    outputs:
+      should_release: ${{ steps.check.outputs.should_release }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - id: check
+        env:
+          FORCE: ${{ inputs.force }}
+        run: |
+          last="$(git tag --list 'nightly-*' --sort=-version:refname | head -n 1)"
+          last_sha="$(git rev-parse "$last^{commit}" 2>/dev/null || true)"
+
+          release=false
+          if [[ "$FORCE" == true || "$last_sha" != "$GITHUB_SHA" ]]; then
+            release=true
+          fi
+          echo "should_release=$release" >> "$GITHUB_OUTPUT"
+
   build:
-    name: Build ${{ matrix.asset_name }}
+    name: Build ${{ matrix.asset }}
+    needs: prepare
+    if: needs.prepare.outputs.should_release == 'true'
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-latest
-            binary: target/release/cx
-            asset_name: cx-linux-x86_64
-          - os: windows-latest
-            binary: target/release/cx.exe
-            asset_name: cx-windows-x86_64.exe
-          - os: ubuntu-24.04-arm
-            binary: target/release/cx
-            asset_name: cx-linux-arm64
-          - os: windows-11-arm
-            binary: target/release/cx.exe
-            asset_name: cx-windows-arm64.exe
-          - os: macos-15-intel
-            binary: target/release/cx
-            asset_name: cx-macos-x86_64
-          - os: macos-14
-            binary: target/release/cx
-            asset_name: cx-macos-arm64
-
+          - { os: ubuntu-latest, source: target/release/cx, asset: cx-linux-x86_64 }
+          - { os: windows-latest, source: target/release/cx.exe, asset: cx-windows-x86_64.exe }
+          - { os: macos-15-intel, source: target/release/cx, asset: cx-macos-x86_64 }
+          - { os: ubuntu-24.04-arm, source: target/release/cx, asset: cx-linux-arm64 }
+          - { os: windows-11-arm, source: target/release/cx.exe, asset: cx-windows-arm64.exe }
+          - { os: macos-14, source: target/release/cx, asset: cx-macos-arm64 }
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
 
-      - name: Install stable Rust
-        uses: dtolnay/rust-toolchain@stable
+      - run: cargo build --release --locked
 
-      - name: Build release binary
-        run: cargo build --release --locked
-
-      - name: Stage release asset
+      - name: Stage binary
         shell: bash
-        run: |
-          mkdir dist
-          cp "${{ matrix.binary }}" "dist/${{ matrix.asset_name }}"
+        run: mkdir dist && cp "${{ matrix.source }}" "dist/${{ matrix.asset }}"
 
-      - name: Upload release asset
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.asset_name }}
-          path: dist/${{ matrix.asset_name }}
+          name: ${{ matrix.asset }}
+          path: dist/${{ matrix.asset }}
           if-no-files-found: error
 
   publish:
     name: Publish nightly release
     needs: build
     runs-on: ubuntu-latest
-
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
         with:
-          fetch-depth: 0
-
-      - name: Download release assets
-        uses: actions/download-artifact@v4
-        with:
-          path: dist
           pattern: cx-*
+          path: dist
           merge-multiple: true
 
-      - name: Move nightly tag to this commit
+      - name: Create dated prerelease
         run: |
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git tag --force nightly "$GITHUB_SHA"
-          git push origin refs/tags/nightly --force
+          tag="nightly-$(TZ=Asia/Kolkata date +%F)"
 
-      - name: Replace nightly prerelease
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          notes="Automated build from commit $GITHUB_SHA."
-
-          if gh release view nightly > /dev/null 2>&1; then
-            gh release delete nightly --yes
-          fi
-
-          gh release create nightly dist/* --title Nightly --prerelease --notes "$notes"
+          # Replace today's release if this is a re-run.
+          gh release delete "$tag" --yes --cleanup-tag 2>/dev/null || true
+          gh release create "$tag" dist/* \
+            --target "$GITHUB_SHA" \
+            --title "Nightly ${tag#nightly-}" \
+            --prerelease \
+            --notes "Automated build from commit $GITHUB_SHA."
