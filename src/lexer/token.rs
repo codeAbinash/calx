@@ -1,3 +1,4 @@
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum TokenKind {
     Comment,
     Ident,
@@ -10,10 +11,13 @@ pub enum TokenKind {
     While,
     In,
     Return,
+    Break,
+    Continue,
     Number,
     Str,
     True,
     False,
+    Null,
     // Logical operators
     And,
     Or,
