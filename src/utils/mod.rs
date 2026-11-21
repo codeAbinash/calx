@@ -1,6 +1,6 @@
 mod color;
 #[allow(dead_code)]
-mod print_ast;
+// mod print_ast;
 mod print_token;
 mod table;
 
