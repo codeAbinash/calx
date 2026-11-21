@@ -1,3 +1,4 @@
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub enum TokenKind {
     Comment,
     Ident,
@@ -52,6 +53,60 @@ pub enum TokenKind {
     Dot,
     Colon,
     Eof,
+}
+
+impl TokenKind {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Comment => "Comment",
+            Self::Ident => "Ident",
+            Self::Let => "Let",
+            Self::Fn => "Fn",
+            Self::If => "If",
+            Self::Else => "Else",
+            Self::For => "For",
+            Self::While => "While",
+            Self::In => "In",
+            Self::Return => "Return",
+            Self::Break => "Break",
+            Self::Continue => "Continue",
+            Self::Number => "Number",
+            Self::Str => "Str",
+            Self::True => "True",
+            Self::False => "False",
+            Self::Null => "Null",
+            Self::And => "And",
+            Self::Or => "Or",
+            Self::Not => "Not",
+            Self::NotEq => "NotEq",
+            Self::Eq => "Eq",
+            Self::EqEq => "EqEq",
+            Self::Gt => "Gt",
+            Self::GtEq => "GtEq",
+            Self::Lt => "Lt",
+            Self::LtEq => "LtEq",
+            Self::BitAnd => "BitAnd",
+            Self::BitOr => "BitOr",
+            Self::BitXor => "BitXor",
+            Self::Add => "Add",
+            Self::Sub => "Sub",
+            Self::Mul => "Mul",
+            Self::Div => "Div",
+            Self::Mod => "Mod",
+            Self::Arrow => "Arrow",
+            Self::LParen => "LParen",
+            Self::RParen => "RParen",
+            Self::LCurly => "LCurly",
+            Self::RCurly => "RCurly",
+            Self::LSquare => "LSquare",
+            Self::RSquare => "RSquare",
+            Self::Comma => "Comma",
+            Self::Semicolon => "Semicolon",
+            Self::Dot => "Dot",
+            Self::Colon => "Colon",
+            Self::Eof => "Eof",
+        }
+    }
 }
 
 pub struct Token {

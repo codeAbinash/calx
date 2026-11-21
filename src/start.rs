@@ -1,6 +1,6 @@
 use crate::errors;
 use crate::lexer::tokenize;
-use crate::utils::print_source;
+use crate::utils::{print_source, print_tokens};
 use std::io;
 
 pub fn run(path: Option<&str>) -> io::Result<bool> {
@@ -22,5 +22,6 @@ pub fn run(path: Option<&str>) -> io::Result<bool> {
     }
 
     print_source(&source, &lexed.tokens);
+    print_tokens(&source, &lexed.tokens);
     Ok(true)
 }
