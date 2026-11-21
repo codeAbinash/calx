@@ -14,8 +14,11 @@ pub(crate) fn ident_or_keyword(cursor: &mut Cursor, tokens: &mut Vec<Token>) {
         "while" => TokenKind::While,
         "in" => TokenKind::In,
         "return" => TokenKind::Return,
+        "break" => TokenKind::Break,
+        "continue" => TokenKind::Continue,
         "true" => TokenKind::True,
         "false" => TokenKind::False,
+        "null" => TokenKind::Null,
         _ => TokenKind::Ident,
     };
 

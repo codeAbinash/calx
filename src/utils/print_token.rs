@@ -2,14 +2,14 @@ use super::color::Style;
 use crate::lexer::{Token, TokenKind};
 
 mod theme {
-    pub const COMMENT: (u8, u8, u8) = (0x5c, 0x63, 0x70);
-    pub const KEYWORD: (u8, u8, u8) = (0xc6, 0x78, 0xdd);
-    pub const NUMBER: (u8, u8, u8) = (0xd1, 0x9a, 0x66);
-    pub const VALUE: (u8, u8, u8) = (0xd1, 0x9a, 0x66);
-    pub const IDENT: (u8, u8, u8) = (0xe0, 0x6c, 0x95);
-    pub const OPERATOR: (u8, u8, u8) = (0xab, 0xb2, 0xbf);
-    pub const PUNCTUATION: (u8, u8, u8) = (0xab, 0xb2, 0xbf);
-    pub const STRING: (u8, u8, u8) = (0x98, 0xc3, 0x79);
+    pub const COMMENT: (u8, u8, u8) = (0x60, 0x72, 0x95);
+    pub const KEYWORD: (u8, u8, u8) = (0xcf, 0x65, 0xef);
+    pub const NUMBER: (u8, u8, u8) = (0xeb, 0x9e, 0x55);
+    pub const VALUE: (u8, u8, u8) = (0xeb, 0x9e, 0x55);
+    pub const IDENT: (u8, u8, u8) = (0xf0, 0x5e, 0x91);
+    pub const OPERATOR: (u8, u8, u8) = (0xb9, 0xc3, 0xd5);
+    pub const PUNCTUATION: (u8, u8, u8) = (0xb9, 0xc3, 0xd5);
+    pub const STRING: (u8, u8, u8) = (0x8e, 0xd6, 0x6c);
 }
 
 use TokenKind as T;
@@ -19,7 +19,16 @@ fn color_of(kind: &T) -> (u8, u8, u8) {
         T::Comment => theme::COMMENT,
         T::Number => theme::NUMBER,
         T::Ident => theme::IDENT,
-        T::Let | T::Fn | T::If | T::Else | T::For | T::While | T::In | T::Return => theme::KEYWORD,
+        T::Let
+        | T::Fn
+        | T::If
+        | T::Else
+        | T::For
+        | T::While
+        | T::In
+        | T::Return
+        | T::Break
+        | T::Continue => theme::KEYWORD,
         T::Add
         | T::Sub
         | T::Mul
@@ -51,7 +60,7 @@ fn color_of(kind: &T) -> (u8, u8, u8) {
         | T::RSquare
         | T::Eof => theme::PUNCTUATION,
         T::Str => theme::STRING,
-        T::True | T::False => theme::VALUE,
+        T::True | T::False | T::Null => theme::VALUE,
     }
 }
 
